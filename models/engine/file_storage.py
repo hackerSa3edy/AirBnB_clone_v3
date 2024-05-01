@@ -37,16 +37,18 @@ class FileStorage:
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
         if obj is not None:
-            key = obj.__class__.__name__ + "." + obj.id
-            self.__objects[key] = obj
+            self.all().update({
+                obj.to_dict()['__class__'] + '.' + obj.id: obj
+                })
 
     def save(self):
         """serializes __objects to the JSON file (path: __file_path)"""
-        json_objects = {}
-        for key in self.__objects:
-            json_objects[key] = self.__objects[key].to_dict()
-        with open(self.__file_path, 'w') as f:
-            json.dump(json_objects, f)
+        with open(FileStorage.__file_path, 'w') as f:
+            temp = {}
+            temp.update(FileStorage.__objects)
+            for key, val in temp.items():
+                temp[key] = val.to_dict()
+            json.dump(temp, f)
 
     def reload(self):
         """deserializes the JSON file to __objects"""
@@ -73,7 +75,7 @@ class FileStorage:
         """Return the object based on the class and its ID,
         or None if not found"""
         if cls is not None and id is not None:
-            return self.__objects.get(f"{cls}.{id}", None)
+            return self.__objects.get(f"{cls.__name__}.{id}", None)
         return None
 
     def count(self, cls=None):
@@ -81,9 +83,9 @@ class FileStorage:
         If no class is passed, returns the count of all objects in storage"""
         if cls is not None:
             objN = 0
-            for key in self.__objects.keys():
-                clsName = key.split('.')
-                if cls == clsName:
+            for key in list(self.__objects.keys()):
+                clsName = key.split('.')[0]
+                if cls.__name__ == clsName:
                     objN += 1
             return objN
-        return cls
+        return len(self.__objects)

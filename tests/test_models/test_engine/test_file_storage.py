@@ -3,7 +3,7 @@
 Contains the TestFileStorageDocs classes
 """
 
-from datetime import datetime
+from models import storage
 import inspect
 import models
 from models.engine import file_storage
@@ -113,3 +113,260 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+class TestFileStorageGetMethod(unittest.TestCase):
+    """Unittests for get method of file storage module"""
+
+    @classmethod
+    def setUp(cls):
+        """Set up test methods"""
+        try:
+            os.rename("file.json", "tmp")
+        except IOError:
+            pass
+
+    @classmethod
+    def tearDown(cls):
+        """Tear down test methods"""
+        try:
+            os.remove("file.json")
+        except IOError:
+            pass
+        try:
+            os.rename("tmp", "file.json")
+        except IOError:
+            pass
+        FileStorage._FileStorage__objects = {}
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_amenity_wrong_id(self):
+        """test get with amenity with wrong id"""
+        self.assertEqual(storage.get(Amenity, '12345'), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_city_wrong_id(self):
+        """test get with city with wrong id"""
+        self.assertEqual(storage.get(City, '12345'), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_place_wrong_id(self):
+        """test get with place with wrong id"""
+        self.assertEqual(storage.get(Place, '12345'), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_review_wrong_id(self):
+        """test get with review with wrong id"""
+        self.assertEqual(storage.get(Review, '12345'), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_state_wrong_id(self):
+        """test get with state with wrong id"""
+        self.assertEqual(storage.get(State, '12345'), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_user_wrong_id(self):
+        """test get with user with wrong id"""
+        self.assertEqual(storage.get(User, '12345'), None)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_amenity_valid_id(self):
+        """test get with amenity with valid id"""
+        amenity = Amenity()
+        amenity.save()
+        amenity_from_get = storage.get(Amenity, amenity.id)
+        self.assertEqual(amenity_from_get.to_dict(), amenity.to_dict())
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_city_valid_id(self):
+        """test get with city with valid id"""
+        city = City()
+        city.save()
+        city_from_get = storage.get(City, city.id)
+        self.assertEqual(city_from_get.to_dict(), city.to_dict())
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_place_valid_id(self):
+        """test get with place with valid id"""
+        place = Place()
+        place.save()
+        place_from_get = storage.get(Place, place.id)
+        self.assertEqual(place_from_get.to_dict(), place.to_dict())
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_review_valid_id(self):
+        """test get with Reviestate with valid id"""
+        review = Review()
+        review.save()
+        review_from_get = storage.get(Review, review.id)
+        self.assertEqual(review_from_get.to_dict(), review.to_dict())
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_state_valid_id(self):
+        """test get with state with valid id"""
+        state = State()
+        state.save()
+        state_from_get = storage.get(State, state.id)
+        self.assertEqual(state_from_get.to_dict(), state.to_dict())
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_get_with_user_valid_id(self):
+        """test get with user with valid id"""
+        user = User()
+        user.save()
+        user_from_get = storage.get(User, user.id)
+        self.assertEqual(user_from_get.to_dict(), user.to_dict())
+
+
+class TestFileStorageCountMethod(unittest.TestCase):
+    """Unittests for count method of file storage module"""
+
+    @classmethod
+    def setUp(cls):
+        """Set up test methods"""
+        try:
+            os.rename("file.json", "tmp")
+        except IOError:
+            pass
+
+    @classmethod
+    def tearDown(cls):
+        """Tear down test methods"""
+        try:
+            os.remove("file.json")
+        except IOError:
+            pass
+        try:
+            os.rename("tmp", "file.json")
+        except IOError:
+            pass
+        FileStorage._FileStorage__objects = {}
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_without_cls(self):
+        """Test count without cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(), 6)
+        self.assertEqual(storage.count(), len(storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_with_amenity_cls(self):
+        """Test count with amenity cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(Amenity), 1)
+        self.assertNotEqual(storage.count(Amenity), len(storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_with_city_cls(self):
+        """Test count with city cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(City), 1)
+        self.assertNotEqual(storage.count(City), len(storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_with_place_cls(self):
+        """Test count with place cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(Place), 1)
+        self.assertNotEqual(storage.count(Place), len(storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_with_review_cls(self):
+        """Test count with review cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(Review), 1)
+        self.assertNotEqual(storage.count(Review), len(storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_with_state_cls(self):
+        """Test count with state cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(State), 1)
+        self.assertNotEqual(storage.count(State), len(storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
+    def test_count_with_user_cls(self):
+        """Test count with user cls"""
+        amenity = Amenity()
+        amenity.save()
+        city = City()
+        city.save()
+        place = Place()
+        place.save()
+        review = Review()
+        review.save()
+        state = State()
+        state.save()
+        user = User()
+        user.save()
+        self.assertEqual(storage.count(User), 1)
+        self.assertNotEqual(storage.count(User), len(storage.all()))
+
+
+if __name__ == '__main__':
+    unittest.main()

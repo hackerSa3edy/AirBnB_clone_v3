@@ -79,7 +79,7 @@ class DBStorage:
         """Return the object based on the class and its ID,
         or None if not found"""
         if cls is not None and id is not None:
-            return self.all().get(f"{cls}.{id}", None)
+            return self.all().get(f"{cls.__name__}.{id}", None)
         return None
 
     def count(self, cls=None):
@@ -88,8 +88,8 @@ class DBStorage:
         if cls is not None:
             objN = 0
             for key in self.all().keys():
-                clsName = key.split('.')
-                if cls == clsName:
+                clsName = key.split('.')[0]
+                if cls.__name__ == clsName:
                     objN += 1
             return objN
-        return cls
+        return len(self.all())

@@ -66,7 +66,7 @@ def err404(error):
     return make_response(jsonify({"error": "Not found"}), 404)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """
     The main function runs the Flask application on host '0.0.0.0' and
     port 5000.

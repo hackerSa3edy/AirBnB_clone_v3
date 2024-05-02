@@ -24,7 +24,7 @@ It also enables multithreading.
 
 """
 
-from flask import Flask
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 
@@ -45,6 +45,24 @@ def close_db(excep):
         The exception that was raised (if any).
     """
     storage.close()
+
+
+@app.errorhandler(404)
+def err404(error):
+    """
+    This function is a route handler for the 404 error in the application.
+    It is triggered when a requested resource is not found on the server.
+
+    Args:
+        error (werkzeug.exceptions.HTTPException): The error object passed
+        by the Flask application.
+
+    Returns:
+        A tuple where the first element is a JSON object with a key "error"
+        and a value "Not found",
+        and the second element is the HTTP status code 404.
+    """
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == '__main__':

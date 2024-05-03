@@ -58,7 +58,7 @@ def retrieve_place(place_id):
         A JSON dictionary representing the Place object if found, otherwise
         aborts with a 404 error.
     """
-    obj = storage.get(City, place_id)
+    obj = storage.get(Place, place_id)
     if not obj:
         abort(404)
     return make_response(jsonify(obj.to_dict()), 200)
@@ -99,7 +99,7 @@ def create_place(city_id):
     """
     from models.user import User
 
-    city = storage.get(Place, city_id)
+    city = storage.get(City, city_id)
     if not city:
         abort(404)
 

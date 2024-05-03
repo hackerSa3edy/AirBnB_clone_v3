@@ -74,7 +74,7 @@ class FileStorage:
         """Return the object based on the class and its ID,
         or None if not found"""
         if cls is not None and id is not None:
-            return self.__objects.get(f"{cls.__name__}.{id}", None)
+            return self.__objects.get(cls.__name__ + '.' + id)
         return None
 
     def count(self, cls=None):

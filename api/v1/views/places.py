@@ -22,7 +22,7 @@ from flask import jsonify, abort, request, make_response
 
 
 @app_views.route("/cities/<string:city_id>/places", methods=["GET"])
-def list_cities(city_id):
+def list_places(city_id):
     """
     Retrieves all places objects associated with a specific City object from
     the storage.
@@ -47,7 +47,7 @@ def list_cities(city_id):
 
 
 @app_views.route("/places/<string:place_id>", methods=["GET"])
-def retrieve_city(place_id):
+def retrieve_place(place_id):
     """
     Retrieves a specific Place object from the storage.
 
@@ -65,7 +65,7 @@ def retrieve_city(place_id):
 
 
 @app_views.route("/places/<string:place_id>", methods=["DELETE"])
-def delete_city(place_id):
+def delete_place(place_id):
     """
     Deletes a specific Place object from the storage.
 
@@ -85,7 +85,7 @@ def delete_city(place_id):
 
 
 @app_views.route("/cities/<string:city_id>/places", methods=["POST"])
-def create_city(city_id):
+def create_place(city_id):
     """
     Creates a new Place object associated with a specific City object and
     saves it to the storage.
@@ -124,7 +124,7 @@ def create_city(city_id):
 
 
 @app_views.route("/places/<string:place_id>", methods=["PUT"])
-def update_city(place_id):
+def update_place(place_id):
     """
     Updates a specific Place object in the storage.
 

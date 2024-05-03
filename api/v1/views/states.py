@@ -20,7 +20,7 @@ from flask import jsonify, abort, request, make_response
 
 
 @app_views.route("/states", methods=["GET"])
-def list():
+def list_states():
     """
     Retrieves all State objects from the storage.
 
@@ -37,7 +37,7 @@ def list():
 
 
 @app_views.route("/states/<string:state_id>", methods=["GET"])
-def retrieve(state_id):
+def retrieve_state(state_id):
     """
     Retrieves a specific State object from the storage.
 
@@ -55,7 +55,7 @@ def retrieve(state_id):
 
 
 @app_views.route("/states/<string:state_id>", methods=["DELETE"])
-def delete(state_id):
+def delete_state(state_id):
     """
     Deletes a specific State object from the storage.
 
@@ -69,13 +69,14 @@ def delete(state_id):
     obj = storage.get(State, state_id)
     if not obj:
         abort(404)
-    storage.delete(obj)
+
+    obj.delete()
     storage.save()
     return make_response(jsonify({}), 200)
 
 
 @app_views.route("/states", methods=["POST"])
-def create():
+def create_state():
     """
     Creates a new State object and saves it to the storage.
 
@@ -90,13 +91,12 @@ def create():
         return make_response("Missing name", 400)
 
     newObj = State(**params)
-    storage.new(newObj)
-    storage.save()
+    newObj.save()
     return make_response(jsonify(newObj.to_dict()), 201)
 
 
 @app_views.route("/states/<string:state_id>", methods=["PUT"])
-def update(state_id):
+def update_state(state_id):
     """
     Updates a specific State object in the storage.
 
@@ -122,8 +122,7 @@ def update(state_id):
     updated_obj.update(params)
     new_obj = State(**updated_obj)
 
-    storage.delete(obj)
-    storage.new(new_obj)
-    storage.save()
+    obj.delete()
+    new_obj.save()
 
     return make_response(jsonify(new_obj.to_dict()), 200)

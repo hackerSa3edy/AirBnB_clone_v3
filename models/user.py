@@ -31,7 +31,8 @@ class User(BaseModel, Base):
 
     def __setattr__(self, name: str, value: str) -> None:
         """
-        Overrides the default behavior of the __setattr__ method to hash the password when it is set.
+        Overrides the default behavior of the __setattr__ method to hash the
+        password when it is set.
 
         Args:
             name (str): The name of the attribute to set.

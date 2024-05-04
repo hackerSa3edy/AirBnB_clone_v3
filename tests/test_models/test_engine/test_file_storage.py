@@ -229,9 +229,13 @@ class TestFileStorageCountMethod(unittest.TestCase):
         except IOError:
             pass
 
+        return super().setUp()
+
+
     @classmethod
     def tearDown(cls):
         """Tear down test methods"""
+        FileStorage._FileStorage__objects = {}
         try:
             os.remove("file.json")
         except IOError:
@@ -240,7 +244,8 @@ class TestFileStorageCountMethod(unittest.TestCase):
             os.rename("tmp", "file.json")
         except IOError:
             pass
-        FileStorage._FileStorage__objects = {}
+
+        return super().tearDown()
 
     @unittest.skipIf(models.storage_t == 'db', "not testing db storage")
     def test_count_without_cls(self):
@@ -275,6 +280,7 @@ class TestFileStorageCountMethod(unittest.TestCase):
         state.save()
         user = User()
         user.save()
+        print(len(storage.all()))
         self.assertEqual(len(storage.all()), 6)
         self.assertEqual(storage.count(Amenity), 1)
         self.assertNotEqual(storage.count(Amenity), len(storage.all()))

@@ -70,15 +70,10 @@ class BaseModel:
             del new_dict["_sa_instance_state"]
 
         if "reviews" in new_dict:
-            new_dict["reviews"] = [
-                obj.to_dict() if type(obj) is not dict else obj
-                for obj in new_dict["reviews"]
-                ]
+            new_dict.pop("reviews", None)
+
         if "amenities" in new_dict:
-            new_dict["amenities"] = [
-                obj.to_dict() if type(obj) is not dict else obj
-                for obj in new_dict["amenities"]
-                ]
+            new_dict.pop("amenities", None)
 
         if models.storage_t == 'db' and new_dict.get('password'):
             del new_dict['password']

@@ -214,10 +214,8 @@ def search_places():
 
         if len(amenities) != 0 and type(amenities) is list:
             amenities = [
-                storage.get(Amenity, amenity_id) for amenity_id in amenities if storage.get(
-                    Amenity,
-                    amenity_id
-                    )
+                storage.get(Amenity, amenity_id) for amenity_id
+                in amenities if storage.get(Amenity, amenity_id)
                 ]
             filtered_places = []
             storage_t = getenv('HBNB_TYPE_STORAGE')

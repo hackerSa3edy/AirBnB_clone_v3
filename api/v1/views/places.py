@@ -212,8 +212,9 @@ def search_places():
             all_places.extend(storage.all(Place).values())
 
         if len(amenities) != 0 and type(amenities) is list:
+            filtered_places = []
             storage_t = getenv('HBNB_TYPE_STORAGE')
-            for place in all_places.copy():
+            for place in all_places:
                 if storage_t == 'db':
                     place_amenities = place.amenities
                 else:
@@ -222,9 +223,11 @@ def search_places():
                 for amenity in place_amenities:
                     if storage_t == 'db':
                         amenity = amenity.id
-                    if amenity not in amenities:
-                        all_places.remove(place)
+                    if amenity in amenities:
+                        filtered_places.append(place)
                         break
+            del all_places
+            all_places = filtered_places
     else:
         all_places.extend(storage.all(Place).values())
 

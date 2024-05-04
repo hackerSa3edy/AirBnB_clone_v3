@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """ holds class User"""
-from typing import Any
 import models
 from models.base_model import BaseModel, Base
 from os import getenv
@@ -30,7 +29,17 @@ class User(BaseModel, Base):
         """initializes user"""
         super().__init__(*args, **kwargs)
 
-    def __setattr__(self, name: str, value: Any) -> None:
+    def __setattr__(self, name: str, value: str) -> None:
+        """
+        Overrides the default behavior of the __setattr__ method to hash the password when it is set.
+
+        Args:
+            name (str): The name of the attribute to set.
+            value (Any): The value to set the attribute to.
+
+        Returns:
+            None
+        """
         if name == 'password':
-            value = hashlib.md5(bytes(str(value), 'utf-8')).hexdigest()
+            value = hashlib.md5(bytes(value, 'utf-8')).hexdigest()
         return super().__setattr__(name, value)

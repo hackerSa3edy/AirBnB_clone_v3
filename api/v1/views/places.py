@@ -19,6 +19,7 @@ from models.place import Place
 from models.state import State
 from models import storage
 from api.v1.views import app_views
+from os import getenv
 from flask import jsonify, abort, request, make_response
 
 
@@ -211,9 +212,17 @@ def search_places():
             all_places.extend(storage.all(Place).values())
 
         if len(amenities) != 0 and type(amenities) is list:
+            storage_t = getenv('HBNB_TYPE_STORAGE')
             for place in all_places.copy():
-                for amenity in place.amenities:
-                    if amenity.id not in amenities:
+                if storage_t == 'db':
+                    place_amenities = place.amenities
+                else:
+                    place_amenities = place.amenity_ids
+
+                for amenity in place_amenities:
+                    if storage_t == 'db':
+                        amenity = amenity.id
+                    if amenity not in amenities:
                         all_places.remove(place)
                         break
     else:
@@ -221,6 +230,7 @@ def search_places():
 
     return make_response(jsonify(
         [
-            obj.to_dict() for obj in all_places
+            obj.to_dict() if type(obj) is not dict else obj
+            for obj in all_places
             ]
     ), 200)

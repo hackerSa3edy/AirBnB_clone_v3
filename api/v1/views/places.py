@@ -183,7 +183,7 @@ def search_places():
         object that matches the search criteria.
     """
     req_body = request.get_json(silent=True, cache=False)
-    if not req_body:
+    if req_body is None:
         return make_response("Not a JSON", 400)
 
     all_places = []

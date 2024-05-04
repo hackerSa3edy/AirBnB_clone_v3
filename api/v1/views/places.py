@@ -210,13 +210,14 @@ def search_places():
         all_places = list(all_places)
 
         if len(states) == 0 and len(cities) == 0:
-            all_places.extend(storage.all(Place).values())
+            all_places = storage.all(Place).values()
 
-        if len(amenities) != 0 and type(amenities) is list:
+        if len(amenities) != 0:
             amenities = [
                 storage.get(Amenity, amenity_id) for amenity_id
                 in amenities if storage.get(Amenity, amenity_id)
                 ]
+
             filtered_places = []
             storage_t = getenv('HBNB_TYPE_STORAGE')
             for place in all_places:
@@ -232,7 +233,7 @@ def search_places():
             del all_places
             all_places = filtered_places
     else:
-        all_places.extend(storage.all(Place).values())
+        all_places = storage.all(Place).values()
 
     return make_response(jsonify(
         [

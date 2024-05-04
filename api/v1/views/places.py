@@ -16,6 +16,7 @@ Imports:
 
 from models.city import City
 from models.place import Place
+from models.state import State
 from models import storage
 from api.v1.views import app_views
 from flask import jsonify, abort, request, make_response
@@ -156,3 +157,70 @@ def update_place(place_id):
     new_obj.save()
 
     return make_response(jsonify(new_obj.to_dict()), 200)
+
+
+@app_views.route('/places_search', methods=["POST"])
+def search_places():
+    """
+    Searches for Place objects that match the criteria specified in the
+    request body.
+
+    The request body should be a JSON object that may contain the keys
+    "states", "cities", and "amenities".
+    The value for each key should be a list of ids representing State,
+    City, and Amenity objects respectively.
+
+    If the request body is empty, all Place objects are returned.
+
+    If the request body is not a JSON, returns a JSON error message with
+    a status code 400.
+
+    Args:
+        None
+
+    Returns:
+        A JSON list of dictionaries where each dictionary represents a Place
+        object that matches the search criteria.
+    """
+    req_body = request.get_json(silent=True, cache=False)
+    if not req_body:
+        return make_response("Not a JSON", 400)
+
+    all_places = []
+    if len(req_body) != 0:
+        states = req_body.get("states", [])
+        cities = req_body.get("cities", [])
+        amenities = req_body.get("amenities", [])
+
+        if len(states) != 0 and type(states) is list:
+            for state_id in states:
+                state_obj = storage.get(State, state_id)
+                if state_obj:
+                    for city in state_obj.cities:
+                        all_places.extend(city.places)
+        if len(cities) != 0 and type(cities) is list:
+            for city_id in cities:
+                city_obj = storage.get(City, city_id)
+                if city_obj:
+                    all_places.extend(city_obj.places)
+
+        all_places = set(all_places)
+        all_places = list(all_places)
+
+        if len(states) == 0 and len(cities) == 0:
+            all_places.extend(storage.all(Place).values())
+
+        if len(amenities) != 0 and type(amenities) is list:
+            for place in all_places.copy():
+                for amenity in place.amenities:
+                    if amenity.id not in amenities:
+                        all_places.remove(place)
+                        break
+    else:
+        all_places.extend(storage.all(Place).values())
+
+    return make_response(jsonify(
+        [
+            obj.to_dict() for obj in all_places
+            ]
+    ), 200)
